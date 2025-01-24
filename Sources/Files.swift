@@ -27,7 +27,7 @@ import Foundation
 // MARK: - Locations
 
 /// Enum describing various kinds of locations that can be found on a file system.
-public enum LocationKind {
+public enum LocationKind: Sendable {
     /// A file can be found at the location.
     case file
     /// A folder can be found at the location.
@@ -185,7 +185,7 @@ public extension Location {
     /// doensn't modify the instance this is called on.
     /// - parameter manager: The new file manager that should manage this location.
     /// - throws: `LocationError` if the change couldn't be completed.
-    func managedBy(_ manager: FileManager) throws -> Self {
+    func managedBy() throws -> Self {
         return try Self(storage: Storage(
             path: path
         ))
@@ -288,7 +288,6 @@ private extension Storage where LocationType == Folder {
     func makeChildSequence<T: Location>() -> Folder.ChildSequence<T> {
         return Folder.ChildSequence(
             folder: Folder(storage: self),
-            fileManager: FileManager.default,
             isRecursive: false,
             includeHidden: false
         )
@@ -485,14 +484,12 @@ public extension Folder {
     /// or `subfolders` on a `Folder` instance.
     struct ChildSequence<Child: Location>: Sequence {
         fileprivate let folder: Folder
-        fileprivate let fileManager: FileManager
         fileprivate var isRecursive: Bool
         fileprivate var includeHidden: Bool
 
         public func makeIterator() -> ChildIterator<Child> {
             return ChildIterator(
                 folder: folder,
-                fileManager: fileManager,
                 isRecursive: isRecursive,
                 includeHidden: includeHidden,
                 reverseTopLevelTraversal: false
@@ -504,7 +501,6 @@ public extension Folder {
     /// with this type directly. See `ChildSequence` for more information.
     struct ChildIterator<Child: Location>: IteratorProtocol {
         private let folder: Folder
-        private let fileManager: FileManager
         private let isRecursive: Bool
         private let includeHidden: Bool
         private let reverseTopLevelTraversal: Bool
@@ -513,12 +509,10 @@ public extension Folder {
         private var nestedIterators = [ChildIterator<Child>]()
 
         fileprivate init(folder: Folder,
-                         fileManager: FileManager,
                          isRecursive: Bool,
                          includeHidden: Bool,
                          reverseTopLevelTraversal: Bool) {
             self.folder = folder
-            self.fileManager = fileManager
             self.isRecursive = isRecursive
             self.includeHidden = includeHidden
             self.reverseTopLevelTraversal = reverseTopLevelTraversal
@@ -558,7 +552,6 @@ public extension Folder {
                 if let childFolder = childFolder {
                     let nested = ChildIterator(
                         folder: childFolder,
-                        fileManager: fileManager,
                         isRecursive: true,
                         includeHidden: includeHidden,
                         reverseTopLevelTraversal: false
@@ -572,7 +565,7 @@ public extension Folder {
         }
 
         private mutating func loadItemNames() -> [String] {
-            let contents = try? fileManager.contentsOfDirectory(atPath: folder.path)
+          let contents = try? FileManager.default.contentsOfDirectory(atPath: folder.path)
             let names = contents?.sorted() ?? []
             return reverseTopLevelTraversal ? names.reversed() : names
         }
@@ -619,7 +612,6 @@ public extension Folder.ChildSequence {
     func last() -> Child? {
         var iterator = Iterator(
             folder: folder,
-            fileManager: fileManager,
             isRecursive: isRecursive,
             includeHidden: includeHidden,
             reverseTopLevelTraversal: !isRecursive

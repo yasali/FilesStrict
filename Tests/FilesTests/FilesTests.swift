@@ -550,7 +550,7 @@ class FilesTests: XCTestCase {
             try XCTAssertEqual(subfolder.createFile(named: "test").parent, subfolder)
         }
     }
-    
+
     func testRootFolderParentIsNil() {
         performTest {
             try XCTAssertNil(Folder(path: "/").parent)
@@ -773,36 +773,11 @@ class FilesTests: XCTestCase {
             XCTAssertEqual(subfolderA.files.first, subfolderB.files.first)
         }
     }
-    
+
     func testCreatingFileWithString() {
         performTest {
             let file = try folder.createFile(named: "file", contents: Data("Hello world".utf8))
             XCTAssertEqual(try file.readAsString(), "Hello world")
-        }
-    }
-    
-    func testUsingCustomFileManager() {
-        class FileManagerMock: FileManager {
-            var noFilesExist = false
-            
-            override func fileExists(atPath path: String, isDirectory: UnsafeMutablePointer<ObjCBool>?) -> Bool {
-                if noFilesExist {
-                    return false
-                }
-                
-                return super.fileExists(atPath: path, isDirectory: isDirectory)
-            }
-        }
-        
-        performTest {
-            let fileManager = FileManagerMock()
-            let subfolder = try folder.managedBy(fileManager).createSubfolder(named: UUID().uuidString)
-            let file = try subfolder.createFile(named: "file")
-            try XCTAssertEqual(file.read(), Data())
-        
-            // Mock that no files exist, which should call file lookups to fail
-            fileManager.noFilesExist = true
-            try assert(subfolder.file(named: "file"), throwsErrorOfType: LocationError.self)
         }
     }
 
@@ -849,7 +824,7 @@ class FilesTests: XCTestCase {
         Reason: stringEncodingFailed(\"Hello\")
         """)
     }
-    
+
     // MARK: - Utilities
     
     private func performTest(closure: () throws -> Void) {
@@ -873,7 +848,7 @@ class FilesTests: XCTestCase {
     
     // MARK: - Linux
     
-  @MainActor static var allTests = [
+    static let allTests = [
         ("testCreatingAndDeletingFile", testCreatingAndDeletingFile),
         ("testCreatingFileAtPath", testCreatingFileAtPath),
         ("testDroppingLeadingSlashWhenCreatingFileAtPath", testDroppingLeadingSlashWhenCreatingFileAtPath),
@@ -930,7 +905,6 @@ class FilesTests: XCTestCase {
         ("testCreateFolderIfNeeded", testCreateFolderIfNeeded),
         ("testCreateSubfolderIfNeeded", testCreateSubfolderIfNeeded),
         ("testCreatingFileWithString", testCreatingFileWithString),
-        ("testUsingCustomFileManager", testUsingCustomFileManager),
         ("testFolderContainsFile", testFolderContainsFile),
         ("testFolderContainsSubfolder", testFolderContainsSubfolder),
         ("testErrorDescriptions", testErrorDescriptions)
