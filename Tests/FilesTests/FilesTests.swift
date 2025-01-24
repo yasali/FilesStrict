@@ -873,7 +873,7 @@ class FilesTests: XCTestCase {
     
     // MARK: - Linux
     
-    static var allTests = [
+  @MainActor static var allTests = [
         ("testCreatingAndDeletingFile", testCreatingAndDeletingFile),
         ("testCreatingFileAtPath", testCreatingFileAtPath),
         ("testDroppingLeadingSlashWhenCreatingFileAtPath", testDroppingLeadingSlashWhenCreatingFileAtPath),
