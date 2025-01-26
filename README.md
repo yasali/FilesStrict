@@ -1,3 +1,28 @@
+# FileStrict
+
+**FileStrict** is a Swift 6-compatible, thread-safe fork of the popular [Files](https://github.com/yasali/Files) library. It offers a clean and modern API for working with the file system while adhering to Swift's strict concurrency model to ensure robust and safe file operations.
+
+## Key Features
+- **Swift 6 Compatibility**: Fully updated to leverage Swift 6 concurrency features, such as `async/await`, for safer and more efficient file operations.
+- **Thread-Safe Design**: Guarantees thread safety, making it reliable for use in highly concurrent environments.
+- **Intuitive API**: Simplifies file management tasks like reading, writing, copying, and deleting files and folders.
+- **Cross-Platform Support**: Works seamlessly across iOS, macOS, tvOS, and watchOS.
+- **Error Handling**: Provides clear and descriptive error types for easier debugging and management.
+
+## Why Choose FileStrict?
+FileStrict is built for modern Swift development. By addressing the limitations of the original Files library regarding concurrency and thread safety, FileStrict ensures that your file management operations are secure, reliable, and aligned with current Swift best practices.
+
+## Installation
+FileStrict is available via [Swift Package Manager](https://swift.org/package-manager/). Simply add it to your `Package.swift` file or use Xcode's package integration.
+
+## Contribution
+We welcome contributions! If you encounter any issues or have suggestions for enhancements, feel free to submit an issue or pull request on GitHub.
+
+---
+
+**Repository**: [GitHub - FileStrict](https://github.com/yasali/FilesStrict)
+
+
 <p align="center">
     <img src="logo.png" width="300" max-width="50%" alt=“Files” />
 </p>
